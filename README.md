@@ -52,13 +52,13 @@ Roll Track was designed as an enterprise manufacturing workflow system that prov
 - Reporting
 - Operational decision support
 
-Over time the system evolved from a desktop application into a broader operational platform integrating multiple business systems and manufacturing processes.
+Over time, the system evolved from a desktop application into an enterprise manufacturing application that integrates multiple business systems, supports manufacturing workflows, and serves as a central operational platform for production.
 
 ---
 
 # My Role
 
-As the lead software engineer responsible for the project, I designed and implemented the software architecture, including:
+As the sole software engineer responsible for the system, I designed, implemented, evolved, deployed, and supported the software architecture, including:
 
 - Desktop application architecture
 - MVVM application design
@@ -87,11 +87,11 @@ I was responsible for designing and implementing the software architecture that 
 - Windows Services
 - XML Processing
 - REST Integration
-- Dependency Injection
+- Dependency Injection (DI)
 - Async/Await
 - Background Processing
-
----
+- In-Memory Caching
+- Performance Optimization
 
 # Repository Roadmap
 
