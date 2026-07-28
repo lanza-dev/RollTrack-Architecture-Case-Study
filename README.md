@@ -141,6 +141,204 @@ Business requirements directly influenced the software architecture.
 
 ---
 
+# Architecture Walkthrough
+
+The easiest way to understand Roll Track is to follow the lifecycle of a production job as it moves through the manufacturing process.
+
+Rather than describing the software component by component, this walkthrough demonstrates how the architecture supports a real manufacturing workflow from the arrival of production data through final manufacturing operations.
+
+---
+
+## Step 1 — Production Data Arrives
+
+Manufacturing planning systems generate production information describing the rolls and jobs that will be printed.
+
+Those systems export XML files containing production metadata.
+
+```text
+Ultimate Production Planning
+            │
+            ▼
+     RollFileList XML
+```
+
+**Business Goal**
+
+Automatically receive manufacturing work without manual data entry.
+
+**Architectural Decision**
+
+A background Windows Service continuously monitors for new XML files so operators never need to import production data manually.
+
+---
+
+## Step 2 — Background Processing
+
+The Manifest Service detects newly created XML files and processes them automatically.
+
+Responsibilities include:
+
+- Reading XML files
+- Validating production data
+- Updating manufacturing records
+- Handling retries when files are temporarily unavailable
+- Logging processing activity
+
+```text
+XML Files
+     │
+     ▼
+Manifest Service
+```
+
+**Business Goal**
+
+Provide reliable unattended processing twenty-four hours a day.
+
+---
+
+## Step 3 — Operational Database
+
+After validation, manufacturing information is stored in a centralized SQL Server database.
+
+The database becomes the operational source of truth for:
+
+- Rolls
+- Jobs
+- Workflow stages
+- Production status
+- Manifest information
+- Reporting
+
+```text
+Manifest Service
+        │
+        ▼
+SQL Server
+```
+
+**Business Goal**
+
+Maintain manufacturing state independently of the desktop application.
+
+---
+
+## Step 4 — Desktop Application
+
+Roll Track retrieves manufacturing information from SQL Server and presents it through a WPF desktop application.
+
+Operators work with live production information rather than manually combining information from multiple systems.
+
+```text
+SQL Server
+      │
+      ▼
+Roll Track
+```
+
+The application provides:
+
+- Press operations
+- Bindery workflow
+- QCI workflow
+- Reporting
+- Production visibility
+
+---
+
+## Step 5 — Manufacturing Operations
+
+As manufacturing progresses, operators perform production activities such as:
+
+- Printing manifests
+- Moving rolls through workflow stages
+- Managing split jobs
+- Creating stub rolls
+- Monitoring production progress
+
+Each action updates the operational database while preserving manufacturing workflow state.
+
+```text
+Operator
+     │
+     ▼
+Roll Track
+     │
+     ▼
+SQL Server
+```
+
+---
+
+## Step 6 — Enterprise Integration
+
+Roll Track coordinates information with multiple manufacturing systems.
+
+Examples include:
+
+- Production planning
+- Digital press workflow
+- Manufacturing status systems
+- Quality control
+- Reporting
+
+The desktop application acts as the operational coordination point while allowing each enterprise system to continue performing its specialized role.
+
+---
+
+## Step 7 — Continuous Refresh
+
+Manufacturing activity never stops.
+
+Rather than requiring operators to restart the application or manually reload data, Roll Track continuously refreshes production information.
+
+This allows operators to monitor manufacturing as it evolves throughout the production day.
+
+```text
+Manufacturing Changes
+          │
+          ▼
+Automatic Refresh
+          │
+          ▼
+Updated Production Dashboard
+```
+
+---
+
+## Engineering Perspective
+
+Although users experience Roll Track as a desktop application, the underlying architecture is composed of multiple cooperating layers:
+
+```text
+Business Requirements
+        │
+        ▼
+Manufacturing Workflow
+        │
+        ▼
+Windows Services
+        │
+        ▼
+SQL Server
+        │
+        ▼
+Application Services
+        │
+        ▼
+ViewModels
+        │
+        ▼
+WPF User Interface
+        │
+        ▼
+Production Operators
+```
+
+Each layer has a clearly defined responsibility.
+
+This separation allows the system to evolve over time while preserving operational stability in a manufacturing environment.
+
 # Architecture Philosophy
 
 Several architectural principles guided the design and evolution of Roll Track:
